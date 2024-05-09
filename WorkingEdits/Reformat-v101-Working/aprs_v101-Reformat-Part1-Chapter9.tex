@@ -3,17 +3,18 @@
 \chapter{Chapter 9: Compressed Position Report Data Formats}
 
 
-In compressed data format, the Information field contains the station’s
-latitude and longitude, together with course and speed or pre-calculated radio
-range or altitude.
-This information is compressed to minimize the length of the transmitted
-packet (and therefore improve its chances of being received correctly under
-less than ideal conditions).
-The Information field also contains a display Symbol Code, and there may
-optionally be a plain text comment (uncompressed) as well.
+In compressed data format, the Information field contains the
+station’s latitude and longitude, together with course and speed or
+pre-calculated radio range or altitude.
 
-The Advantages of
-Data Compression
+This information is compressed to minimize the length of the
+transmitted packet (and therefore improve its chances of being
+received correctly under less than ideal conditions).
+
+The Information field also contains a display Symbol Code, and there
+may optionally be a plain text comment (uncompressed) as well.
+
+\section {The Advantages of Data Compression}
 
 Compressed data format may be used in place of the numeric lat/long
 coordinates already described, such as in the !, /, @ and = formats.
@@ -57,8 +58,7 @@ degrees, and this format does not support PHG.
 
 
 
-Compressed Data
-Format
+\section {Compressed Data Format}
 
 Compressed data may be generated in several ways:
 
@@ -76,133 +76,92 @@ Compressed data may be generated in several ways:
 [In future, there is the possibility that a Kantronics KPC-3 or other tracker
 TNC will be able to compress data directly from an attached GPS receiver].
 In all cases the compressed format is a fixed 13-character field:
-/YYYYXXXX$csT
 
-where /
+/YYYYXXXX\$csT
 
-is the Symbol Table Identifier
-is the compressed latitude
-is the compressed longitude
-is the Symbol Code
-is the compressed course/speed or
-compressed pre-calculated radio range or
-compressed altitude
-is the compression type indicator
+where
 
-YYYY
-XXXX
-$
-cs
+\begin{itemize}
 
-T
+\item / is the Symbol Table Identifier
+\item YYYY is the compressed latitude
+\item XXXX is the compressed longitude
+\item \$ is the Symbol Code
+\item cs is
+  \begin {itemize}
+  \item  the compressed course/speed;
+  \item compressed pre-calculated radio range;
+  \item or compressed altitude
+    \end {itemize}
+\item T is the compression type indicator
 
-Compressed Position Data
-Sym
-Table
-ID
+\end {itemize}
 
-Compressed
-Lat
 
-Compressed
-Long
+% Compressed Position Data Table Here
 
-YYYY
 
-XXXX
+Compressed format can be used in place of lat/long position format
+anywhere that
 
-Symbol
-Code
+…ddmm.hhN/dddmm.hhW\$xxxxxxx…
 
-Compressed
-Course/Speed
-Compressed Radio
-Range
+occurs.
 
-Comp
-Type
+All bytes except for the / and \$ are base-91 printable ASCII
+characters (!..\{). These are converted to numeric values by
+subtracting 33 from the decimal ASCII character code. For example, \#
+has an ASCII code of 35, and represents a numeric value of 2
+(i.e. 35-33).
 
-T
-
-Compressed
-Altitude
-Bytes:
-
-1
-
-4
-
-4
-
-1
-
-2
-
-1
-
-Compressed format can be used in place of lat/long position format anywhere
-that …ddmm.hhN/dddmm.hhW$xxxxxxx… occurs.
-All bytes except for the / and $ are base-91 printable ASCII characters
-(!..{). These are converted to numeric values by subtracting 33 from the
-decimal ASCII character code. For example, # has an ASCII code of 35, and
-represents a numeric value of 2 (i.e. 35-33).
-
-Symbol
+\section {Symbol}
 
 The presence of the leading Symbol Table Identifier instead of a digit
 indicates that this is a compressed Position Report and not a normal lat/long
 report.
 
 
-Lat/Long Encoding
+\section{Lat/Long Encoding}
 
 The values of YYYY and XXXX are computed as follows:
-YYYY
 
-is 380926 x (90 – latitude) [base 91]
+YYYY is 380926 x (90 – latitude) [base 91]
 latitude is positive for north, negative for south, in degrees.
 
-XXXX
-
-is 190463 x (180 + longitude) [base 91]
+XXXX is 190463 x (180 + longitude) [base 91]
 longitude is positive for east, negative for west, in degrees.
 
-For example, for a longitude of 72° 45' 00" west (i.e. -72.75 degrees), the
-math is 190463 x (180 – 72.75) = 20427156. Because this is to base 91, it is
-then necessary to progressively divide this value by reducing powers of 91,
-to obtain the numerical values of X:
-20427156 / 913
-80739 / 912
-6210 / 911
+For example, for a longitude of 72° 45' 00" west (i.e. -72.75
+degrees), the math is 190463 x (180 – 72.75) = 20427156. Because this
+is to base 91, it is then necessary to progressively divide this value
+by reducing powers of 91, to obtain the numerical values of X:
 
-= 27, remainder 80739
-= 9, remainder 6210
-= 68, remainder 22
+20427156 / $91^{3}$ = 27, remainder 80739
+80739 / $91^{2} = 9$, remainder 6210
+6210 / $91^{1} = 68$, remainder 22
 
-To obtain the corresponding ASCII characters, 33 is added to each of these
-values, yielding 60 (i.e. 27+33), 42, 101 and 55. From the ASCII Code Table
-(in Appendix 3), this corresponds to <*e7 for XXXX.
 
-Lat/Long Decoding
 
-To decode a compressed lat/long, the reverse process is needed. That is, if
-YYYY is represented as y1y2y3y4 and XXXX as x1x2x3x4, then:
-3
+To obtain the corresponding ASCII characters, 33 is added to each of
+these values, yielding 60 (i.e. 27+33), 42, 101 and 55. From the ASCII
+Code Table (in Appendix 3), this corresponds to <*e7 for XXXX.
 
-2
+\section{Lat/Long Decoding}
+
+To decode a compressed lat/long, the reverse process is needed. That
+is, if YYYY is represented as $y_{1}y_{2}y_{3}y_{4}$ and XXXX as
+$x_{1}x_{2}x_{3}x_{4}$, then:
+
 
 Lat = 90 - ((y1-33) x 91 + (y2-33) x 91 + (y3-33) x 91 + y4-33) / 380926
-3
-
-2
 
 Long = -180 + ((x1-33) x 91 + (x2-33) x 91 + (x3-33) x 91 + x4-33) / 190463
 
 For example, if the compressed value of the longitude is <*e7 (as computed
 above), the calculation becomes:
-3
 
-2
+
+
 
 Long = -180 + (27 x 91 + 9 x 91 + 68 x 91 + 22) / 190463
 
@@ -210,80 +169,59 @@ Long = -180 + (27 x 91 + 9 x 91 + 68 x 91 + 22) / 190463
 = -180 + 107.25
 = -72.75 degrees
 
-Course/Speed,
-Pre-Calculated
-Radio Range and
-Altitude
+\section {Course/Speed, Pre-Calculated Radio Range and Altitude}
 
 The two cs bytes following the Symbol Code character can contain either
 the compressed course and speed or the compressed pre-calculated radio
 range or the station’s altitude. These two bytes are in base 91 format.
-In the special case of c = V (space), there is no course, speed or range
+
+In the special case of c = \textvisiblespace (space), there is no course, speed or range
 data, in which case the csT bytes are ignored.
-Course/Speed — If the ASCII code for c is in the range ! to z inclusive —
-corresponding to numeric values in the range 0–89 decimal (i.e. after
-subtracting 33 from the ASCII code) — then cs represents a compressed
-course/speed value:
 
-
+{\em Course/Speed} — If the ASCII code for c is in the range ! to z
+inclusive — corresponding to numeric values in the range 0–89 decimal
+(i.e. after subtracting 33 from the ASCII code) — then cs represents a
+compressed course/speed value:
 
 
 course = c x 4
+
 speed = 1.08s – 1
 
-For example, if the cs characters are 7P, the corresponding values of c and
-s (after subtracting 33 from the ASCII character code) are 22 and 47
-respectively. Substituting these values in the above equations:
+For example, if the cs characters are 7P, the corresponding values of
+c and s (after subtracting 33 from the ASCII character code) are 22
+and 47 respectively. Substituting these values in the above equations:
+
 course = 22 x 4 = 88 degrees
+
 speed = 1.0847 – 1 = 36.2 knots
 
-Pre-Calculated Radio Range — If c = {, then cs represents a compressed
-pre-calculated radio range value:
+{\em Pre-Calculated Radio Range} — If c = \{, then cs represents a
+compressed pre-calculated radio range value:
+  
 range = 2 x 1.08s
 
 For example, if the cs bytes are {?, the ASCII code for ? is 63, so the value
 of s is 30 (i.e. 63-33). Thus:
-range = 2 x 1.0830
+
+$range = 2 x 1.08^{30}$
 
 ~ 20 miles
+
 So APRS will draw a circle of radius 20 miles around the station plot on the
 screen.
 
-The Compression
-Type (T) Byte
+\section{The Compression Type (T) Byte}
 
 The T byte follows the cs bytes. The T byte contains several bit fields
 showing the GPS fix status, the NMEA source of the position data and the
 origin of the compression.
-The T byte is not meaningful if the c byte is V (space).
-Compression Type (T) Byte Format
 
-Bit:
+The T byte is not meaningful if the c byte is \textvisiblespace (space).
 
-Value:
+% Compression Type (T) Byte Format Table
 
-7
 
-6
-
-5
-
-Not used
-
-Not used
-
-GPS Fix
-
-0
-
-0
-
-0 = old (last)
-1 = current
-
-4
-
-3
 
 NMEA Source
 0 0 = other
@@ -291,11 +229,6 @@ NMEA Source
 1 0 = GGA
 1 1 = RMC
 
-2
-
-1
-
-0
 
 Compression Origin
 0 0 0 = Compressed
@@ -312,23 +245,17 @@ the fix is current, and the compression was performed by APRSdos software,
 then the value of T in binary is 0 0 1 11 010, which equates to 58 decimal.
 Adding 33 to this value gives the ASCII code for the T byte (i.e. 91), which
 corresponds to the [ character.
+
 Thus, using data from all the earlier examples, if the RMC sentence contains
 (among other parameters) the following data:
-Latitude
-Longitude
-Speed
-Course
+
+Latitude = 49° 30' 00" north
+Longitude = 72° 45' 00" west
+Speed = 36.2 knots
+Course = 88°
+
 and:
 
-=
-=
-=
-=
-
-49° 30' 00" north
-72° 45' 00" west
-36.2 knots
-88°
 
 the fix is current
 compression is performed by APRSdos software
@@ -336,50 +263,41 @@ the display symbol is a “car”
 
 then the complete 13-character compressed location field is transmitted as:
 
-Altitude
+% small table
 
-/ YYYY
+\section{Altitude}
 
-XXXX
-
-$
-
-csT
-
-/ 5L!!
-
-<*e7
-
->
-
-7P[
 
 If the T byte indicates that the raw data originates from a GGA sentence (i.e.
 bits 4 and 3 of the T byte are 10), then the sentence contains an altitude
 value, in feet. After compression, the compressed altitude data is placed in
 the cs bytes, such that:
+
 altitude = 1.002cs feet
 
 For example, if the received cs bytes are S], the computation is as follows:
 
-New Trackers
+% fill in
 
-•
+
+
 
 Subtract 33 from the ASCII code for each character:
 c = 83 – 33 = 50
 s = 93 – 33 = 60
 
-•
+
 
 Multiply c by 91 and add s to obtain cs:
 cs = 50 x 91 + 60
 = 4610
 
-•
 
-Then altitude = 1.0024610
+
+$ Then altitude = 1.002^{4610} $
 = 10004 feet
+
+\section {New Trackers}
 
 Tracker firmware may compress GPS data directly to APRS compressed
 format. They would use the ! Data Type Indicator, showing that the position
@@ -391,7 +309,7 @@ used instead, so that the latest fix time may be included.
 Some digipeaters have the ability to convert raw NMEA strings from existing
 trackers to compressed data format for further forwarding.
 
-Old Trackers
+\section {Old Trackers}
 
 These digipeaters will compress the data if the tracker Destination Address is
 GPS. (Note: This is the 3-letter address GPS, not GPS*).
@@ -401,62 +319,9 @@ will use any other valid generic APRS Destination Address.
 Compressed data is contained in the AX.25 Information field, in these
 formats:
 
-Compressed Report
-Formats
+\section {Compressed Report Formats}
 
-Compressed Lat/Long Position Report Format — no Timestamp
-! or
-=
-
-Sym
-Table
-ID
-
-Comp
-Lat
-
-Comp
-Long
-
-YYYY
-
-XXXX
-
-Symbol
-Code
-
-Compressed
-Course/Speed
-
-T
-
-Comment
-(max 40
-chars)
-
-1
-
-0-40
-
-Comp
-Type
-
-Compressed Radio
-Range
-Compressed
-Altitude
-
-Bytes:
-
-1
-
-1
-
-4
-
-4
-
-1
+% Table here
 
 Examples
 =/5L!!<*e7>V sTComment
@@ -470,2013 +335,21 @@ with APRS messaging, RMC sentence, with course/speed.
 with APRS messaging, with radio range.
 with APRS messaging, GGA sentence, altitude.
 
+
+
 =/5L!!<*e7>7P[
 =/5L!!<*e7>{?!
 =/5L!!<*e7OS]S
 
+% table here
+
 Compressed Lat/Long Position Report Format — with Timestamp
 
-/ or
-
-@
-
-Time
-DHM /
-HMS
-
-Sym
-Table
-ID
-
-Comp
-Lat
-
-Comp
-Long
-
-YYYY
-
-XXXX
-
-Symbol
-Code
-
-Compressed
-Course/Speed
-Compressed Radio
-Range
-
-T
-
-Comment
-(max 40
-chars)
-
-1
-
-0-40
-
-Comp
-Type
-
-Compressed
-Altitude
-Bytes:
-
-1
-
-7
-
-1
-
-4
 
 Example
 @092345z/5L!!<*e7>{?!
 
-4
-
-1
-
-2
 
 with APRS messaging, timestamp, radio range.
 
 
-
-
-
-\chapter{Chapter 10: Mic-E Data Format}
-
-
-\section{Mic-E Data Format}
-
-In Mic-E data format, the station’s position, course, speed and display
-symbol, together with an APRS digipeater path and Mic-E Message Code,
-are packed into the AX.25 Destination Address and Information fields.
-The Information field can also optionally contain either Mic-E telemetry data
-or Mic-E status. The Mic-E Status can contain the station’s Maidenhead
-locator and altitude.
-
-Mic-E packets can be very short. At the minimum, with no callsigns in the
-Digipeater Addresses field and no optional telemetry data or Mic-E status
-text, a complete Mic-E packet is just 25 bytes long (excluding FCS and
-flags).
-
-Mic-E data format is not only used in the Microphone Encoder unit; it is also
-used in the PIC Encoder and in the Kenwood TH-D7 and TM-D700 radios.
-
-\section{Mic-E Data Payload}
-
-The Mic-E data format allows a large amount of data to be carried in a very
-short packet. The data is split between the Destination Address field and the
-Information field of a standard AX.25 UI-frame.
-
-\subsection{Destination Address Field--} The 7-byte Destination Address field contains
-the following encoded information:
-
-\begin {itemize}
-\item The 6 latitude digits.
-
-\item A 3-bit Mic-E message identifier, specifying one of 7 Standard Mic-E
-Message Codes or one of 7 Custom Message Codes or an Emergency
-Message Code.
-
-\item The North/South and West/East Indicators.
-
-\item The Longitude Offset Indicator.
-
-\item The generic APRS digipeater path code.
-\end{itemize}
-
-Although the destination address appears to be quite unconventional, it is
-still a valid AX.25 address, consisting only of printable 7-bit ASCII values
-(shifted one bit left) — see the Amateur Packet-Radio Link-Layer Protocol
-specification for full details of the format of standard AX.25 addresses.
-Information Field — This field contains the following data:
-
-
-\begin{itemize}
-  
-\item The encoded longitude.
-
-\item The encoded course and speed.
-
-\item The display Symbol Code and Symbol Table Identifier.
-
-\item An optional field, containing either Mic-E telemetry data or a Mic-E
-status text string. The status string can contain plain text, Maidenhead
-locator or the station’s altitude.
-
-\end{itemize}
-
-\subsection{Mic-E Destination}
-\paragraph {Address Field}
-
-The standard AX.25 Destination Address field consists of 7 bytes, containing
-6 callsign characters and the SSID (plus a number of other bits that are not of
-interest here). When used to carry Mic-E data, however, this field has a quite
-different format:
-
-\paragraph {Mic-E Data — DESTINATION ADDRESS FIELD Format}
-
-Bytes:
-
-Lat Digit 1
-+ Message
-Bit A
-
-Lat Digit 2
-+ Message
-Bit B
-
-Lat Digit 3
-+ Message
-Bit C
-
-Lat Digit 4
-+ N/S Lat
-Indicator
-
-Lat Digit 5
-+ Longitude
-Offset
-
-Lat Digit 6
-+ W/E Long
-Indicator
-
-APRS
-Digi Path
-Code
-
-1
-
-1
-
-1
-
-1
-
-1
-
-1
-
-1
-
-The Destination Address field contains:
-
-
-  
-Destination
-Address Field
-Encoding
-
-\begin{itemize}
-
-\item Six encoded latitude digits specifying degrees (digits 1 and 2), minutes
-(digits 3 and 4) and hundredths of minutes (digits 5 and 6).
-
-\item 3-bit Mic-E message identifier (message bits A, B and C).
-
-\item North/South latitude indicator.
-
-\item Longitude offset (adds 0 degrees or 100 degrees to the longitude
-computation in the Information field).
-
-\item West/East longitude indicator.
-
-\item Generic APRS digipeater path (encoded in the SSID).
-
-\end{itemize}
-  
-The table on the next page shows the encoding of the first 6 bytes of the
-Destination Address field, for all combinations of latitude digit, the 3-bit
-Mic-E message identifier (A/B/C), the latitude/longitude indicators and the
-longitude offset.
-The encoding supports position ambiguity.
-The ASCII characters shown in the table are left-shifted one bit position prior
-to transmission.
-
-
-
-Mic-E Destination Address Field Encoding (Bytes 1–6)
-Byte:
-
-1-6
-
-1-3
-
-4
-
-5
-
-6
-
-ASCII
-Char
-
-Lat
-Digit
-
-Message
-A/B/C
-
-N/S
-
-Long
-Offset
-
-W/E
-
-0
-
-0
-
-0
-
-South
-
-+0
-
-1
-
-1
-
-0
-
-South
-
-2
-
-2
-
-0
-
-3
-
-3
-
-0
-
-4
-
-4
-
-5
-6
-7
-
-Byte:
-
-1-6
-
-1-3
-
-4
-
-5
-
-6
-
-ASCII
-Char
-
-Lat
-Digit
-
-Message
-A/B/C
-
-N/S
-
-Long
-Offset
-
-W/E
-
-East
-
-H
-
-7
-
-1 (Custom)
-
-+0
-
-East
-
-I
-
-8
-
-1 (Custom)
-
-South
-
-+0
-
-East
-
-J
-
-9
-
-1 (Custom)
-
-South
-
-+0
-
-East
-
-K
-
-space
-
-1 (Custom)
-
-0
-
-South
-
-+0
-
-East
-
-L
-
-space
-
-0
-
-South
-
-+0
-
-East
-
-5
-
-0
-
-South
-
-+0
-
-East
-
-P
-
-0
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-6
-
-0
-
-South
-
-+0
-
-East
-
-Q
-
-1
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-7
-
-0
-
-South
-
-+0
-
-East
-
-R
-
-2
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-8
-
-8
-
-0
-
-South
-
-+0
-
-East
-
-S
-
-3
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-9
-
-9
-
-0
-
-South
-
-+0
-
-East
-
-T
-
-4
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-A
-
-0
-
-1 (Custom)
-
-U
-
-5
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-B
-
-1
-
-1 (Custom)
-
-V
-
-6
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-C
-
-2
-
-1 (Custom)
-
-W
-
-7
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-D
-
-3
-
-1 (Custom)
-
-X
-
-8
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-E
-
-4
-
-1 (Custom)
-
-Y
-
-9
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-F
-
-5
-
-1 (Custom)
-
-Z
-
-space
-
-1 (Std)
-
-North
-
-+100
-
-West
-
-G
-
-6
-
-1 (Custom)
-
-Note: the ASCII characters A–K are not used in address bytes 4–6.
-
-For example, for a station at a latitude of 33 degrees 25.64 minutes north, in
-the western hemisphere, with longitude offset +0 degrees, and transmitting
-standard message identifier bits 1/0/0, the encoding of the first 6 bytes of the
-Destination Address field is as follows:
-Destination Address Byte:
-
-1
-
-2
-
-3
-
-4
-
-5
-
-6
-
-Latitude Digit
-
-3
-
-3
-
-2
-
-5
-
-6
-
-4
-
-Message Bits
-
-Message
-Bit A
-= 1 (Std)
-
-Message
-Bit B
-=0
-
-Message
-Bit C
-=0
-North
-
-N/S Indicator
-
-+0
-
-Long Offset
-
-West
-
-W/E Indicator
-Dest Address
-(ASCII Char)
-
-% Document Version 1.0.1: 29 August 2000
-
-S
-
-3
-
-2
-
-U
-
-6
-
-T
-
-
-Mic-E Messages
-
-The first three bytes of the Destination Address field contain three message
-identifier bits: A, B and C. These bits allow one of 15 message types to be
-specified:
-
-\begin{itemize}
-
-\item 7 Standard messages
-\item 7 Custom messages
-\item 1 Emergency message
-
-\end{itemize}
-
-For the 7 Standard messages, one or more of the message identifier bits is a
-1, shown in the Mic-E Destination Address Field Encoding table as 1 (Std).
-For the 7 Custom messages, one or more of the message identifier bits is a 1,
-shown in the Mic-E Destination Address Field Encoding table as 1 (Custom).
-For the Emergency message, all three message identifier bits are 0.
-The following table shows the encoding of Mic-E message types, for all
-combinations of the A/B/C message identifier bits:
-Mic-E Message Types
-Standard Mic-E
-Message Type
-
-Custom Mic-E
-Message Type
-
-A
-
-B
-
-C
-
-1
-
-1
-
-1
-
-M0: Off Duty
-
-C0: Custom-0
-
-1
-
-1
-
-0
-
-M1: En Route
-
-C1: Custom-1
-
-1
-
-0
-
-1
-
-M2: In Service
-
-C2: Custom-2
-
-1
-
-0
-
-0
-
-M3: Returning
-
-C3: Custom-3
-
-0
-
-1
-
-1
-
-M4: Committed
-
-C4: Custom-4
-
-0
-
-1
-
-0
-
-M5: Special
-
-C5: Custom-5
-
-0
-
-0
-
-1
-
-M6: Priority
-
-C6: Custom-6
-
-0
-
-0
-
-0
-
-Emergency
-
-The Standard messages and the Emergency message have the same meaning
-for all APRS stations. The Custom messages may be assigned any arbitrary
-meaning.
-Note: Support for Custom messages is optional. Original Mic-E units do not
-support Custom messages.
-Note: If the A/B/C message identifier bits contain a mixture of Standard 1s
-and Custom 1s, the message type is “unknown”.
-
-
-Some examples of message type encoding:
-First 3
-Destination
-Address Bytes
-
-Message Identifier
-Bits A/B/C
-
-Message
-Type
-
-Message
-
-S32
-
-Standard 1 / 0 / 0
-
-Standard
-
-M3: Returning
-
-F2D
-
-Custom 1 / 0 / Custom 1
-
-Custom
-
-C2: Custom-2
-
-234
-
-0/0/0
-
-Emergency
-
-Emergency
-
-The SSID in the Destination Address field of a Mic-E packet is coded to
-specify either a conventional digipeater VIA path (contained in the
-Digipeater Addresses field of the AX.25 frame), or one of 15 generic APRS
-digipeater paths. See Chapter 4: APRS Data in the AX.25 Destination and
-Source Address Fields.
-
-Destination
-Address
-SSID Field
-
-The Information field is used to complete the Position Report that was begun
-in the Destination Address field. The encoding used is different from the
-destination address since the content is not constrained to be printable,
-shifted 7-bit ASCII, as it is in the address. However, full 8-bit binary is not
-used — all values are offset by 28 and further operations (described below)
-are performed on some of the values to make almost all of the data printable
-ASCII.
-
-Mic-E Information
-Field
-
-The format of the Information field is as follows:
-Mic-E Data — INFORMATION FIELD Format
-
-Bytes:
-
-Longitude
-
-Speed and Course
-
-Data
-Type
-ID
-
-d+28
-
-m+28
-
-h+28
-
-SP+28
-
-DC+28
-
-SE+28
-
-1
-
-1
-
-1
-
-1
-
-1
-
-1
-
-1
-
-Information Field
-Data
-
-Symbol
-Code
-
-Sym
-Table
-ID
-
-Mic-E Telemetry Data
-
-1
-
-1
-
-n
-
-Mic-E Status Text
-
-The first 9 bytes of the Information field contain the APRS Data Type
-Identifier, longitude, speed, course and symbol data.
-The APRS Data Type Identifier is one of:
-‘
-Current GPS data
-(but not used in Kenwood TM-D700 radios) .
-'
-Old GPS data
-(or Current GPS data in Kenwood TM-D700 radios).
-0x1c Current GPS data (Rev. 0 beta units only).
-0x1d Old GPS data (Rev. 0 beta units only).
-
-
-
-IMPORTANT NOTE: As explained in detail below, some of the bytes in
-the Information field are non-printing ASCII characters. In certain
-circumstances (such as incorrect TNC setup or inappropriate software), some
-of these non-printing characters may be dropped, making the Information
-field appear shorter than it really is. This will lead to incorrect decoding. (In
-particular, if the Information field appears to be less than 9 bytes long, the
-packet must be ignored).
-
-Longitude Degrees
-Encoding
-
-The d+28 byte in the Information field contains the encoded value of the
-longitude degrees, in the range 0–179 degrees.
-(Note that for longitude values in the range 0–9 degrees, the longitude offset
-is +100 degrees):
-Mic-E Longitude Degrees Encoding
-Long
-Deg
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-…
-97
-98
-99
-
-ASCII
-Char
-v
-w
-x
-y
-z
-{
-|
-}
-~
-
-d+28
-
-Long
-Offset
-
-Long
-Deg
-
-DEL
-
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-
-&
-'
-(
-
-38
-39
-40
-
-+0
-+0
-+0
-
-}
-~
-
-125
-126
-127
-
-+0
-+0
-+0
-
-110
-111
-112
-…
-177
-178
-179
-
-DEL
-
-ASCII
-Char
-l
-m
-n
-o
-p
-q
-r
-s
-t
-u
-
-d+28
-
-Long
-Offset
-
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-+100
-
-&
-'
-(
-
-38
-39
-40
-
-+100
-+100
-+100
-
-i
-j
-k
-
-105
-106
-107
-
-+100
-+100
-+100
-
-
-Note from the table that the encoding is split into four separate pieces:
-
-\begin{itemize}
-\item 0–9 degrees: d+28 is in the range 118–127 decimal, corresponding to
-the ASCII characters v to DEL.
-Important Note: The longitude offset is set to +100 degrees when
-the longitude is in the range 0–9 degrees.
-
-\item 10–99 degrees: d+28 is in the range 38–127 decimal (corresponding
-to the ASCII characters & to DEL), and the longitude offset is +0
-degrees.
-
-\item 100–109 degrees: d+28 is in the range 108–117 decimal,
-corresponding to the ASCII characters l (lower-case letter “L”) to
-DEL, and the longitude offset is +100 degrees.
-
-\item 110–179 degrees: d+28 is in the range 38–127 decimal
-(corresponding to the ASCII characters & to DEL), and the longitude
-offset is +100 degrees.
-
-
-\end{itemize}
-
-Thus the overall range of valid d+28 values is 38–127 decimal
-(corresponding to ASCII characters & to DEL).
-All of these characters (except DEL, for 9 and 99 degrees) are printable
-ASCII characters.
-To decode the longitude degrees value:
-1. subtract 28 from the d+28 value to obtain d.
-2. if the longitude offset is +100 degrees, add 100 to d.
-3. subtract 80 if 180 ˜ d ˜ 189
-(i.e. the longitude is in the range 100–109 degrees).
-4. or, subtract 190 if 190 ˜ d ˜ 199.
-(i.e. the longitude is in the range 0–9 degrees).
-Longitude Minutes
-Encoding
-
-The m+28 byte in the Information field contains the encoded value of the
-longitude minutes, in the range 0–59 minutes:
-Mic-E Longitude Minutes Encoding
-Long
-Mins
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-
-ASCII
-Char
-X
-Y
-Z
-[
-\
-]
-^
-_
-‘
-a
-
-m+28
-
-Long
-Mins
-
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-
-10
-11
-12
-13
-14
-…
-56
-57
-58
-59
-
-ASCII
-Char
-&
-'
-(
-)
-*
-
-m+28
-
-T
-U
-V
-W
-
-84
-85
-86
-87
-
-38
-39
-40
-41
-42
-
-Note from the table that the encoding is split into two separate pieces:
-•
-
-0–9 minutes: m+28 is in the range 88–97 decimal, corresponding to
-the ASCII characters X to a.
-
-•
-
-10–59 minutes: m+28 is in the range 38–87 decimal (corresponding
-to the ASCII characters & to W).
-
-Thus the overall range of valid m+28 values is 38–97 decimal (corresponding
-to ASCII characters & to a). All of these characters are printable ASCII
-characters.
-To decode the longitude minutes value:
-1. subtract 28 from the m+28 value to obtain m.
-2. subtract 60 if m ™ 60.
-(i.e. the longitude minutes is in the range 0–9).
-
-Longitude
-Hundredths of
-Minutes Encoding
-
-The h+28 byte in the Information field contains the encoded value of the
-longitude hundredths of minutes, in the range 0–99 minutes. This byte takes
-a value in the range 28 decimal (corresponding to 0 hundredths of a minute)
-through 127 decimal (corresponding to 99 hundredths of a minute).
-To decode the longitude hundredths of minutes value, subtract 28 from the
-h+28 value.
-All of the possible values are printable ASCII characters (except 0–3 and 99
-hundredths of a minute).
-
-Speed and Course
-Encoding
-
-The speed and course of a station are encoded in 3 bytes, designated SP+28,
-DC+28 and SE+28.
-The speed is in the range 0–799 knots, and the course is in the range 0–360
-degrees (0 degrees represents an unknown or indefinite course, and 360
-degrees represents due north).
-The encoded speed and course are spread over the three bytes, as follows:
-Speed
-
-Course
-
-Encoded Speed
-(hundreds/tens of knots)
-
-Encoded Speed (units) and
-Encoded Course
-(hundreds of degrees)
-
-Encoded Course
-(tens/units)
-
-SP+28
-
-DC+28
-
-SE+28
-
-
-SP+28 Encoding
-
-The SP+28 byte contains the encoded speed, in hundreds/tens of knots,
-according to this table:
-SP+28 Speed Encoding (hundreds/tens of knots)
-Speed
-knots
-0-9
-10-19
-20-29
-30-39
-40-49
-50-59
-60-69
-70-79
-80-89
-90-99
-100-109
-110-119
-120-129
-130-139
-140-149
-150-159
-160-169
-170-179
-180-189
-190-199
-
-l
-m
-n
-o
-p
-q
-r
-s
-t
-u
-v
-w
-x
-y
-z
-{
-|
-}
-~
-
-ASCII
-Char
-0x1c
-0x1d
-0x1e
-0x1f
-
-DEL
-
-V
-!
-"
-#
-$
-%
-&
-'
-(
-)
-*
-+
-,
-.
-/
-
-SP +28
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-
-Speed
-knots
-200-209
-210-219
-220-229
-230-239
-240-249
-250-259
-260-269
-270-279
-280-289
-290-299
-300-310
-310-320
-…
-730-739
-740-749
-750-759
-760-769
-770-779
-780-789
-790-799
-
-ASCII
-Char
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-:
-;
-
-SP +28
-
-e
-f
-g
-h
-i
-j
-k
-
-101
-102
-103
-104
-105
-106
-107
-
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-
-Note: The ASCII characters shown in white on a black background are nonprinting characters.
-Note: For speeds in the range 0–199 knots, there are two encoding schemes
-in existence. Hence there are two columns for the ASCII character, and two
-columns for the corresponding SP+28 byte values.
-For example, for a speed of 73 knots (i.e. in the range 70–79), the SP+28 byte
-may contain either s or #, depending on the encoding method used. Both are
-equally valid.
-The decoding algorithm described later handles either of these encoding
-schemes.
-
-
-DC+28 Encoding
-
-The DC+28 byte contains the encoded units of speed, plus the encoded course
-in hundreds of degrees:
-
-DC+28 Speed / Course Encoding (units of knots/hundreds of degrees)
-Knots
-(units)
-
-Course
-(deg)
-
-0
-0
-0
-0
-
-0-99
-100-199
-200-299
-300-360
-
-V
-!
-
-1
-1
-1
-1
-
-0-99
-100-199
-200-299
-300-360
-
-*
-+
-,
--
-
-2
-2
-2
-2
-
-0-99
-100-199
-200-299
-300-360
-
-3
-3
-3
-3
-4
-4
-4
-4
-
-Knots
-(units)
-
-Course
-(deg)
-
-32
-33
-34
-35
-
-28
-29
-30
-31
-
-5
-5
-5
-5
-
-0-99
-100-199
-200-299
-300-360
-
-ASCII
-Char
-N
-R
-S
-O
-P
-T
-U
-Q
-
-&
-'
-(
-)
-
-42
-43
-44
-45
-
-38
-39
-40
-41
-
-6
-6
-6
-6
-
-0-99
-100-199
-200-299
-300-360
-
-\
-]
-^
-_
-
-X
-Y
-Z
-[
-
-92
-93
-94
-95
-
-88
-89
-90
-91
-
-4
-5
-6
-7
-
-0
-1
-2
-3
-
-52
-53
-54
-55
-
-48
-49
-50
-51
-
-7
-7
-7
-7
-
-0-99
-100-199
-200-299
-300-360
-
-f
-g
-h
-i
-
-b
-c
-d
-e
-
-102
-103
-104
-105
-
-98
-99
-100
-101
-
-0-99
-100-199
-200-299
-300-360
-
->
-?
-@
-A
-
-:
-;
-<
-=
-
-62
-63
-64
-65
-
-58
-59
-60
-61
-
-8
-8
-8
-8
-
-0-99
-100-199
-200-299
-300-360
-
-p
-q
-r
-s
-
-l
-m
-n
-o
-
-112
-113
-114
-115
-
-108
-109
-110
-111
-
-0-99
-100-199
-200-299
-300-360
-
-H
-I
-J
-K
-
-D
-E
-F
-G
-
-72
-73
-74
-75
-
-68
-69
-70
-71
-
-9
-9
-9
-9
-
-0-99
-100-199
-200-299
-300-360
-
-z
-{
-|
-}
-
-v
-w
-x
-y
-
-122
-123
-124
-125
-
-118
-119
-120
-121
-
-"
-#
-
-ASCII
-Char
-0x1c
-0x1d
-0x1e
-0x1f
-
-DC +28
-
-DC +28
-82
-83
-84
-85
-
-78
-79
-80
-81
-
-Note: The ASCII characters shown in white on a black background are nonprinting characters.
-
-Note: There are two encoding schemes in existence for the DC+28 byte.
-
-Hence there are two columns for the ASCII character, and two columns for
-the corresponding DC+28 byte values.
-
-For example, for a speed of 73 knots (i.e. units=3) and a bearing of 294
-degrees (i.e. in the range 200–299), the DC+28 byte may contain either @ or
-<, depending on the encoding method used. Both are equally valid.
-The decoding algorithm described later handles either of these encoding
-schemes.
-
-
-
-SE+28 Encoding
-
-The SE+28 byte contains the encoded tens and units of degrees of the course:
-SE+28 Course Encoding (tens/units of degrees)
-Course
-(deg)
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-
-Example of Mic-E
-Speed and Course
-Encoding
-
-Decoding the
-Speed and Course
-
-ASCII
-Char
-0x1c
-0x1d
-0x1e
-0x1f
-V
-!
-"
-#
-$
-%
-&
-'
-(
-)
-*
-
-m+28
-
-Long
-Mins
-
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-
-15
-16
-17
-18
-19
-…
-91
-92
-93
-94
-95
-96
-97
-98
-99
-
-ASCII
-Char
-+
-,
-.
-/
-
-m+28
-
-w
-x
-y
-z
-{
-|
-}
-~
-
-119
-120
-121
-122
-123
-124
-125
-126
-127
-
-DEL
-
-43
-44
-45
-46
-47
-
-For a speed of 86 knots and a course of 194 degrees, the encoding is:
-SP+28:
-
-The speed is in the range 80–89 knots. From the SP+28 encoding
-table, the SP+28 byte may be either t or $.
-
-DC+28:
-
-The units of speed are 6, and the course is in the range 100–199
-degrees. From the DC+28 encoding table, the DC+28 byte may be
-either ] or Y.
-
-SE+28:
-
-The course in tens and units of degrees is 94. From the SE+28
-encoding table, the SE+28 byte will be z.
-
-To decode the speed and course:
-SP+28:
-
-To obtain the speed in tens of knots, subtract 28 from the SP+28
-value and multiply by 10.
-
-DC+28:
-
-Subtract 28 from the DC+28 value and divide the result by 10. The
-quotient is the units of speed. The remainder is the course in
-hundreds of degrees.
-
-SE+28:
-
-To obtain the tens and units of degrees, subtract 28 from the SE+28
-value.
-
-Finally, make these speed and course adjustments:
-•
-
-If the computed speed is ™ 800 knots, subtract 800.
-
-•
-
-If the computed course is ™ 400 degrees, subtract 400.
