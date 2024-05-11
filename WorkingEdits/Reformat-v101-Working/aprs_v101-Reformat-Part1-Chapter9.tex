@@ -57,7 +57,6 @@ The only minor disadvantages are that the course only resolves to +/- 2
 degrees, and this format does not support PHG.
 
 
-
 \section {Compressed Data Format}
 
 Compressed data may be generated in several ways:
@@ -97,8 +96,25 @@ where
 
 \end {itemize}
 
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  \multicolumn {2}|{c|}{ Compressed Position Data} \\
+  \hline
+  Sym & Compressed & Compressed & Symbol & Compressed   & Comp \\ [-1ex]
+  Table    & Lat  & Long  & Code  & Course/Speed &  \\ 
+  \hline 
+   &  &  &  & Compressed  & Type \\  [-1ex]
+  
+   &  &  &  & Radio Range &  \\ 
+  \hline 
+  Id & YYYY & XXXX &  & Compressed  & T \\ [-1ex]
 
-% Compressed Position Data Table Here
+      &  &  &  & Altitude &  \\
+  \hline 
+  1 & 4 & 4 & 1 & 2 & 1 \\
+  \hline 
+\end{tabular}
+
 
 
 Compressed format can be used in place of lat/long position format
@@ -136,9 +152,9 @@ degrees), the math is 190463 x (180 – 72.75) = 20427156. Because this
 is to base 91, it is then necessary to progressively divide this value
 by reducing powers of 91, to obtain the numerical values of X:
 
-20427156 / $91^{3}$ = 27, remainder 80739
-80739 / $91^{2} = 9$, remainder 6210
-6210 / $91^{1} = 68$, remainder 22
+20427156 / $91^{3}$ = 27, remainder 80739 \\
+80739 / $91^{2} = 9$, remainder 6210 \\
+6210 / $91^{1} = 68$, remainder 22 \\
 
 
 
@@ -153,9 +169,9 @@ is, if YYYY is represented as $y_{1}y_{2}y_{3}y_{4}$ and XXXX as
 $x_{1}x_{2}x_{3}x_{4}$, then:
 
 
-Lat = 90 - ((y1-33) x 91 + (y2-33) x 91 + (y3-33) x 91 + y4-33) / 380926
+$ Lat = 90 - ((y_{1}-33) x 91 + (y_{2}-33) x 91 + (y_{3}-33) x 91 + y_{4}-33) / 380926 $
 
-Long = -180 + ((x1-33) x 91 + (x2-33) x 91 + (x3-33) x 91 + x4-33) / 190463
+$ Long = -180 + ((x1-33) x 91 + (x2-33) x 91 + (x3-33) x 91 + x4-33) / 190463 $
 
 For example, if the compressed value of the longitude is <*e7 (as computed
 above), the calculation becomes:

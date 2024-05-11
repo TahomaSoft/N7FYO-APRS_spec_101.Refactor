@@ -37,7 +37,6 @@ APRS uses the following generic beacon-style destination addresses:
 \> DGPS*  \> DRILL* \> DX*   \> ID*    \> JAVA* \> MAIL* \> MICE* \\
 \> QST*   \> QTH*   \> RTCM* \>SKY*    \> SPACE* \> SPC*  \> SYM* \\
 \> TEL*   \> TEST*  \> TLM*  \> WX*    \> ZIP* $\dagger$ \\
-
 \end{tabbing}
 
 The asterisk is a wildcard, allowing the address to be extended (up to a total
@@ -71,11 +70,11 @@ The addresses TEL and TLM are used for telemetry stations.
 
 \section{Generic APRS Address with Symbol}
 
-APRS uses several of the above-listed generic addresses in a special way, to
-specify not only an address but also a display symbol. These special
-addresses are \textsf {GPSxyz, GPSCnn, GPSEnn, SPCxyz} and \textsf {SYMxyz}, and are
-intended for use where it is not possible to include the symbol in the AX.25
-Information field.
+APRS uses several of the above-listed generic addresses in a special
+way, to specify not only an address but also a display symbol. These
+special addresses are \textsf {GPSxyz, GPSCnn, GPSEnn, SPCxyz} and
+\textsf {SYMxyz}, and are intended for use where it is not possible to
+include the symbol in the AX.25 Information field.
 
 The GPS addresses above are for general use.
 
@@ -83,18 +82,19 @@ The SPC addresses are intended for special events.
 
 The SYM addresses are reserved for future use.
 
-The characters \textsf{xy} and \textsf{nn} refer to entries in the APRS Symbol Tables. The
-character \textsf{z} specifies a symbol overlay. See Chapter 20: APRS Symbols and
-Appendix Two for more information.
+The characters \textsf{xy} and \textsf{nn} refer to entries in the
+APRS Symbol Tables. The character \textsf{z} specifies a symbol
+overlay. See Chapter 20: APRS Symbols and Appendix Two for more
+information.
 
 \section{APRS Software Version Number}
 
-The AX.25 Destination Address field can contain the version number of the
-APRS software that is running at the station. Knowledge of the version
-number can be useful when debugging.
+The AX.25 Destination Address field can contain the version number of
+the APRS software that is running at the station. Knowledge of the
+version number can be useful when debugging.
 
-The following software version types are reserved (xx and xxx indicate a
-version number):
+The following software version types are reserved (xx and xxx indicate
+a version number):
 
 \begin{itemize}
 
@@ -185,9 +185,6 @@ encoded as follows:
 
 \subsubsection*{APRS Digipeater Paths in Destination Address SSID}
 
-\begin{multicols}{2}
-
-      
   \begin{tabular}{|c|c|}
     \hline
     SSID & Path \\       \hline
@@ -213,7 +210,7 @@ encoded as follows:
     -14 & East path + WIDE \\ \hline
     -15 & West path + WIDE \\ \hline
   \end{tabular}
-\end{multicols}
+
 
 
 \section{The AX.25 Source Address SSID to specify Symbols}
