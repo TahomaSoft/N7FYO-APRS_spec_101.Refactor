@@ -98,7 +98,7 @@ where
 
 \begin{tabular}{|c|c|c|c|c|c|}
   \hline
-  \multicolumn {2}|{c|}{ Compressed Position Data} \\
+  \multicolumn {6}{|l|}{Compressed Position Data} \\
   \hline
   Sym & Compressed & Compressed & Symbol & Compressed   & Comp \\ [-1ex]
   Table    & Lat  & Long  & Code  & Course/Speed &  \\ 
@@ -169,21 +169,19 @@ is, if YYYY is represented as $y_{1}y_{2}y_{3}y_{4}$ and XXXX as
 $x_{1}x_{2}x_{3}x_{4}$, then:
 
 
-$ Lat = 90 - ((y_{1}-33) x 91 + (y_{2}-33) x 91 + (y_{3}-33) x 91 + y_{4}-33) / 380926 $
+Lat $ = 90 - ((y_{1}-33) \times 91 + (y_{2}-33) \times 91 + (y_{3}-33) \times 91 + y_{4}-33) / 380926 $
 
-$ Long = -180 + ((x1-33) x 91 + (x2-33) x 91 + (x3-33) x 91 + x4-33) / 190463 $
+Long $ = -180 + ((x1-33) \times 91 + (x2-33) x 91 + (x3-33) \times 91 + x4-33) / 190463 $
 
 For example, if the compressed value of the longitude is <*e7 (as computed
 above), the calculation becomes:
 
 
+Long $ = -180 + (27 \times 91 + 9 \times 91 + 68 \times 91 + 22) / 190463 $
 
-
-Long = -180 + (27 x 91 + 9 x 91 + 68 x 91 + 22) / 190463
-
-= -180 + (20346417 + 74529 + 6188 + 22) / 190463
-= -180 + 107.25
-= -72.75 degrees
+$ = -180 + (20346417 + 74529 + 6188 + 22) / 190463 $ \\
+$ = -180 + 107.25 $ \\
+$ = -72.75 $ degrees 
 
 \section {Course/Speed, Pre-Calculated Radio Range and Altitude}
 
@@ -200,29 +198,27 @@ inclusive — corresponding to numeric values in the range 0–89 decimal
 compressed course/speed value:
 
 
-course = c x 4
+course $ = c \times 4 $
 
-speed = 1.08s – 1
+speed $ = 1.08^{s} – 1 $
 
 For example, if the cs characters are 7P, the corresponding values of
 c and s (after subtracting 33 from the ASCII character code) are 22
 and 47 respectively. Substituting these values in the above equations:
 
-course = 22 x 4 = 88 degrees
+course $ = 22 \times 4 = 88 $ degrees
 
-speed = 1.0847 – 1 = 36.2 knots
+speed $ = 1.0847 – 1 = 36.2 $ knots
 
 {\em Pre-Calculated Radio Range} — If c = \{, then cs represents a
 compressed pre-calculated radio range value:
   
-range = 2 x 1.08s
+range $ = 2 \times 1.08^{s} $
 
 For example, if the cs bytes are {?, the ASCII code for ? is 63, so the value
 of s is 30 (i.e. 63-33). Thus:
 
-$range = 2 x 1.08^{30}$
-
-~ 20 miles
+range $ = 2 \times 1.08^{30} \approx 20 $ miles
 
 So APRS will draw a circle of radius 20 miles around the station plot on the
 screen.
@@ -237,7 +233,11 @@ The T byte is not meaningful if the c byte is \textvisiblespace (space).
 
 % Compression Type (T) Byte Format Table
 
-
+\begin{tabular}{c|c|c|c|c|c|}
+  \hline
+   \multicolumn {6}{r}{Compression Type (T) Byte Format} \\
+  \hline
+\end{tabular}
 
 NMEA Source
 0 0 = other
