@@ -1,0 +1,21 @@
+The AX.25 Proto ID field has been under utilized.
+
+Perhaps use 0xF0 to indicate classic APRS (v1.x)
+use 0xF2 to indicate APRS v2
+
+
+// protocol identifier field
+#define RADIOLIB_AX25_PID_ISO_8208                              0x01
+#define RADIOLIB_AX25_PID_TCP_IP_COMPRESSED                     0x06
+#define RADIOLIB_AX25_PID_TCP_IP_UNCOMPRESSED                   0x07
+#define RADIOLIB_AX25_PID_SEGMENTATION_FRAGMENT                 0x08
+#define RADIOLIB_AX25_PID_TEXNET_DATAGRAM_PROTOCOL              0xC3
+#define RADIOLIB_AX25_PID_LINK_QUALITY_PROTOCOL                 0xC4
+#define RADIOLIB_AX25_PID_APPLETALK                             0xCA
+#define RADIOLIB_AX25_PID_APPLETALK_ARP                         0xCB
+#define RADIOLIB_AX25_PID_ARPA_INTERNET_PROTOCOL                0xCC
+#define RADIOLIB_AX25_PID_ARPA_ADDRESS_RESOLUTION               0xCD
+#define RADIOLIB_AX25_PID_FLEXNET                               0xCE
+#define RADIOLIB_AX25_PID_NET_ROM                               0xCF
+#define RADIOLIB_AX25_PID_NO_LAYER_3                            0xF0
+#define RADIOLIB_AX25_PID_ESCAPE_CHARACTER                      0xFF
