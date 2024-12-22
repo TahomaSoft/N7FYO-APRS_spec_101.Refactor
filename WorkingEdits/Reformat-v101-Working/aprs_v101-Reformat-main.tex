@@ -16,6 +16,7 @@
 \usepackage{ascii}
 \usepackage{hyperref}
 \usepackage{float}
+\usepackage{fancyhdr}
 
 
 % \usepackage{newtxtt}
@@ -68,7 +69,10 @@
 \author{The APRS Working Group}
 
 \begin{document}
-
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[LE,RO]{Unofficial Working Draft\\
+  APRS 1.0 Spec Reconstruction/Refactor}
 \maketitle
 \tableofcontents
 %\listoftables
