@@ -23,32 +23,22 @@ Data compression has several important benefits:
 \begin{itemize}
   
 \item Fully backwards compatible with all existing formats.
-
 \item Fully supports any comment string.
-
 \item Speed is accurate to +/-1 mph up to about 40 mph and within 3\%
   at 600 mph.
-
 \item Altitude in feet is accurate to +/- 0.4\% from 1 foot to 3000 miles.
-
 \item Consistent one-algorithm processing of compressed latitude and
   longitude.
 
 \item Improved position to 1 foot worldwide.
-
 \item Pre-calculated radio range, compressed to one byte.
-
 \item Potential 50\% compression of every position format on the air.
-
 \item Potential 40\% reduction of raw GPS NMEA data length.
-
 \item Additional 7-byte reduction for NEMA GGA altitudes.
-
 \item Support for TNC compression at the NMEA source (from the GPS
   receiver).
 
 \item Digipeater compression of old NMEA trackers on the fly.
-
 \item Usage is optional in all cases.
 
 \end{itemize}
@@ -62,13 +52,9 @@ degrees, and this format does not support PHG.
 Compressed data may be generated in several ways:
 
 \begin{itemize}
-    
-\item by APRS software.
-
+ \item by APRS software.
 \item pre-entered manually into a digipeater’s beacon text.
-
 \item by a digipeater converting raw tracker NMEA packets to compressed.
-
 \end{itemize}
 
 
@@ -118,10 +104,8 @@ where
 
 
 Compressed format can be used in place of lat/long position format
-anywhere that
-
-…ddmm.hhN/dddmm.hhW\$xxxxxxx…
-
+anywhere that \\
+…ddmm.hhN/dddmm.hhW\$xxxxxxx…  \\
 occurs.
 
 All bytes except for the / and \$ are base-91 printable ASCII
@@ -189,8 +173,8 @@ The two cs bytes following the Symbol Code character can contain either
 the compressed course and speed or the compressed pre-calculated radio
 range or the station’s altitude. These two bytes are in base 91 format.
 
-In the special case of c = \textvisiblespace (space), there is no course, speed or range
-data, in which case the csT bytes are ignored.
+In the special case of c = \textvisiblespace (space), there is no
+course, speed or range data, in which case the csT bytes are ignored.
 
 {\em Course/Speed} — If the ASCII code for c is in the range ! to z
 inclusive — corresponding to numeric values in the range 0–89 decimal
@@ -215,8 +199,8 @@ compressed pre-calculated radio range value:
   
 range $ = 2 \times 1.08^{s} $
 
-For example, if the cs bytes are {?, the ASCII code for ? is 63, so the value
-of s is 30 (i.e. 63-33). Thus:
+For example, if the cs bytes are {?, the ASCII code for ? is 63, so
+  the value of s is 30 (i.e. 63-33). Thus:
 
 range $ = 2 \times 1.08^{30} \approx 20 $ miles
 
@@ -233,9 +217,12 @@ The T byte is not meaningful if the c byte is \textvisiblespace (space).
 
 % Compression Type (T) Byte Format Table
 
-\begin{tabular}{c|c|c|c|c|c|}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|}
   \hline
-   \multicolumn {6}{r}{Compression Type (T) Byte Format} \\
+  \multicolumn {9}{|r|}{Compression Type (T) Byte Format} \\
+  \hline
+%  a & b & c & d & e & f & g & h & j \\
+    Bit: & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
   \hline
 \end{tabular}
 
@@ -265,22 +252,32 @@ corresponds to the [ character.
 Thus, using data from all the earlier examples, if the RMC sentence contains
 (among other parameters) the following data:
 
-Latitude = 49° 30' 00" north
-Longitude = 72° 45' 00" west
-Speed = 36.2 knots
-Course = 88°
+\begin{itemize}
+\item [] Latitude = 49° 30' 00" north
+\item [] Longitude = 72° 45' 00" west
+\item [] Speed = 36.2 knots
+\item [] Course = 88°
+\end{itemize}
 
 and:
 
-
-the fix is current
-compression is performed by APRSdos software
-the display symbol is a “car”
-
+\begin{itemize}
+\item [] the fix is current
+\item [] compression is performed by APRSdos software
+\item [] the display symbol is a ``car''
+\end{itemize}
 then the complete 13-character compressed location field is transmitted as:
 
 % small table
 
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+  / & YYYY &  XXXX &  \$ & csT \\
+  \hline 
+  / & 5L!! &  <*e7 &  >  & 7P[ \\
+  \hline
+\end{tabular}
+  
 \section{Altitude}
 
 
@@ -289,28 +286,24 @@ bits 4 and 3 of the T byte are 10), then the sentence contains an altitude
 value, in feet. After compression, the compressed altitude data is placed in
 the cs bytes, such that:
 
+\begin{verbatim}
 altitude = 1.002cs feet
+\end{verbatim}
 
 For example, if the received cs bytes are S], the computation is as follows:
 
-% fill in
 
-
-
-
-Subtract 33 from the ASCII code for each character:
-c = 83 – 33 = 50
+Subtract 33 from the ASCII code for each character: \\
+c = 83 – 33 = 50 \\
 s = 93 – 33 = 60
 
 
-
 Multiply c by 91 and add s to obtain cs:
-cs = 50 x 91 + 60
+cs = 50 x 91 + 60 \\
 = 4610
 
 
-
-$ Then altitude = 1.002^{4610} $
+Then altitude $ = 1.002^{4610} $ \\
 = 10004 feet
 
 \section {New Trackers}
@@ -318,7 +311,7 @@ $ Then altitude = 1.002^{4610} $
 Tracker firmware may compress GPS data directly to APRS compressed
 format. They would use the ! Data Type Indicator, showing that the position
 is real-time and that the tracker is not APRS-capable.
-If the Position Report is not real-time, then the / Data Type Indicator can be
+If the Position Report is not real-time, then the \hl{/} Data Type Indicator can be
 used instead, so that the latest fix time may be included.
 
 
